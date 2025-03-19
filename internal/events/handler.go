@@ -55,7 +55,6 @@ func (e *EventHandler) Handle(update tgbotapi.Update) {
 }
 
 func (e *EventHandler) doCommand(msg *tgbotapi.Message) {
-	fmt.Println(msg.Command())
 	switch msg.Text {
 	case profileCmd:
 		user := e.userSrv.GetUser(msg.From.ID)
