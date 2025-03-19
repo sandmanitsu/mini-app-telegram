@@ -5,6 +5,12 @@ import (
 )
 
 func (e *EventHandler) authMiddleware(update tgbotapi.Update) bool {
+	if update.Message.Command() == startCmd {
+		e.createUser(update.Message)
+
+		return false
+	}
+
 	if !e.userSrv.UserExist(update.Message.From.ID) {
 		e.sendMessage(update.Message.Chat.ID, "Зарегистрируйтесь! команда /start")
 

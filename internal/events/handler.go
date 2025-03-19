@@ -1,7 +1,6 @@
 package events
 
 import (
-	"fmt"
 	"mini-app-telegram/internal/domain"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -10,6 +9,7 @@ import (
 const (
 	startCmd = "start"
 
+	// keyboard commands
 	profileCmd = "Данные профиля"
 )
 
@@ -32,21 +32,6 @@ func NewEventHandler(bot *tgbotapi.BotAPI, userSrv UserService) *EventHandler {
 }
 
 func (e *EventHandler) Handle(update tgbotapi.Update) {
-	if update.Message.Command() == startCmd {
-		e.userSrv.CreateUser(domain.User{
-			UserId:    update.Message.From.ID,
-			Username:  update.Message.From.UserName,
-			FirstName: update.Message.From.FirstName,
-			LastName:  update.Message.From.LastName,
-		})
-
-		message := tgbotapi.NewMessage(update.Message.Chat.ID, "Привет! "+update.Message.From.FirstName)
-		message.ReplyMarkup = e.keyboard()
-		e.bot.Send(message)
-
-		return
-	}
-
 	if !e.authMiddleware(update) {
 		return
 	}
@@ -57,9 +42,7 @@ func (e *EventHandler) Handle(update tgbotapi.Update) {
 func (e *EventHandler) doCommand(msg *tgbotapi.Message) {
 	switch msg.Text {
 	case profileCmd:
-		user := e.userSrv.GetUser(msg.From.ID)
-
-		e.sendMessage(msg.Chat.ID, fmt.Sprintf("Id: %d,\nUsername: %s,\nFirst Name: %s,\nLast Name: %v", user.UserId, user.Username, user.FirstName, user.LastName))
+		e.getProfile(msg)
 	default:
 		e.sendMessage(msg.Chat.ID, "Неизвестная команда!")
 	}
