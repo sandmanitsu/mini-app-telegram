@@ -6,6 +6,14 @@ import (
 
 func (e *EventHandler) authMiddleware(update tgbotapi.Update) bool {
 	if update.Message.Command() == startCmd {
+		if e.userSrv.UserExist(update.Message.From.ID) {
+			message := tgbotapi.NewMessage(update.Message.Chat.ID, "Привет! "+update.Message.From.FirstName)
+			message.ReplyMarkup = e.keyboard()
+			e.bot.Send(message)
+
+			return false
+		}
+
 		e.createUser(update.Message)
 
 		return false

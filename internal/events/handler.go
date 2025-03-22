@@ -14,9 +14,9 @@ const (
 )
 
 type UserService interface {
+	CreateUser(user domain.User) error
+	GetUser(userId int64) (domain.User, error)
 	UserExist(userId int64) bool
-	CreateUser(user domain.User)
-	GetUser(userId int64) domain.User
 }
 
 type EventHandler struct {

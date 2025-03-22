@@ -6,6 +6,7 @@ import (
 	"mini-app-telegram/internal/events"
 	repository "mini-app-telegram/internal/repository/user"
 	"mini-app-telegram/internal/service/user"
+	"mini-app-telegram/internal/storage/postgresql"
 	"os"
 
 	sl "mini-app-telegram/internal/logger"
@@ -18,8 +19,16 @@ const (
 )
 
 func Run(config *config.Config, logger *slog.Logger) {
+	// storage
+	storage, err := postgresql.NewPostgreSQL(config.DB)
+	if err != nil {
+		logger.Error("failed to init postgresql storage", sl.Err(err))
+		os.Exit(1)
+	}
+	_ = storage
+
 	// repository init
-	userRepo := repository.NewUserRepository()
+	userRepo := repository.NewUserRepository(storage.DB, logger)
 
 	// services init
 	userSrv := user.NewUserService(userRepo)

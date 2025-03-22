@@ -8,12 +8,18 @@ import (
 )
 
 func (e *EventHandler) createUser(msg *tgbotapi.Message) {
-	e.userSrv.CreateUser(domain.User{
+	err := e.userSrv.CreateUser(domain.User{
 		UserId:    msg.From.ID,
+		ChatId:    msg.Chat.ID,
 		Username:  msg.From.UserName,
 		FirstName: msg.From.FirstName,
 		LastName:  msg.From.LastName,
 	})
+	if err != nil {
+		e.sendMessage(msg.Chat.ID, errMsgCreateUser)
+
+		return
+	}
 
 	message := tgbotapi.NewMessage(msg.Chat.ID, "Привет! "+msg.From.FirstName)
 	message.ReplyMarkup = e.keyboard()
@@ -21,7 +27,10 @@ func (e *EventHandler) createUser(msg *tgbotapi.Message) {
 }
 
 func (e *EventHandler) getProfile(msg *tgbotapi.Message) {
-	user := e.userSrv.GetUser(msg.From.ID)
+	user, err := e.userSrv.GetUser(msg.From.ID)
+	if err != nil {
+		e.sendMessage(msg.Chat.ID, errMsgGetProfile)
+	}
 
 	e.sendMessage(msg.Chat.ID, fmt.Sprintf("Id: %d,\nUsername: %s,\nFirst Name: %s,\nLast Name: %v", user.UserId, user.Username, user.FirstName, user.LastName))
 }

@@ -12,6 +12,15 @@ import (
 type Config struct {
 	BotToken string `env:"BOT_TOKEN" env-required:"true"`
 	Env      string `env:"ENV" env-required:"true"`
+	DB       DB
+}
+
+type DB struct {
+	Host     string `env:"DBHOST" env-required:"true"`
+	User     string `env:"USER" env-required:"true"`
+	Password string `env:"PASSWORD" env-required:"true"`
+	Port     int    `env:"DBPORT" env-required:"true"`
+	DBname   string `env:"DBNAME" env-required:"true"`
 }
 
 var (
