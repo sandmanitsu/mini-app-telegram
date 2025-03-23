@@ -44,21 +44,8 @@ func (e *EventHandler) doCommand(msg *tgbotapi.Message) {
 	case profileCmd:
 		e.getProfile(msg)
 	default:
-		e.sendMessage(msg.Chat.ID, "Неизвестная команда!")
+		e.bot.Send(
+			NewMessageBuilder(msg.Chat.ID, "Неизвестная команда!").build(),
+		)
 	}
-}
-
-func (e *EventHandler) sendMessage(chatId int64, msg string) {
-	message := tgbotapi.NewMessage(chatId, msg)
-	e.bot.Send(message)
-}
-
-func (e *EventHandler) keyboard() tgbotapi.ReplyKeyboardMarkup {
-	keyboard := tgbotapi.NewReplyKeyboard(
-		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton(profileCmd),
-		),
-	)
-
-	return keyboard
 }

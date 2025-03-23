@@ -7,9 +7,11 @@ import (
 func (e *EventHandler) authMiddleware(update tgbotapi.Update) bool {
 	if update.Message.Command() == startCmd {
 		if e.userSrv.UserExist(update.Message.From.ID) {
-			message := tgbotapi.NewMessage(update.Message.Chat.ID, "Привет! "+update.Message.From.FirstName)
-			message.ReplyMarkup = e.keyboard()
-			e.bot.Send(message)
+			e.bot.Send(
+				NewMessageBuilder(update.Message.Chat.ID, "Привет! "+update.Message.From.FirstName).
+					setReplyKeyboard().
+					build(),
+			)
 
 			return false
 		}
@@ -20,7 +22,9 @@ func (e *EventHandler) authMiddleware(update tgbotapi.Update) bool {
 	}
 
 	if !e.userSrv.UserExist(update.Message.From.ID) {
-		e.sendMessage(update.Message.Chat.ID, "Зарегистрируйтесь! команда /start")
+		e.bot.Send(
+			NewMessageBuilder(update.Message.Chat.ID, "Зарегистрируйтесь! команда /start").build(),
+		)
 
 		return false
 	}

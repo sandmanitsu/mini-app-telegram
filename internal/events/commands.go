@@ -16,21 +16,31 @@ func (e *EventHandler) createUser(msg *tgbotapi.Message) {
 		LastName:  msg.From.LastName,
 	})
 	if err != nil {
-		e.sendMessage(msg.Chat.ID, errMsgCreateUser)
+		e.bot.Send(
+			NewMessageBuilder(msg.Chat.ID, errMsgCreateUser).build(),
+		)
 
 		return
 	}
 
-	message := tgbotapi.NewMessage(msg.Chat.ID, "Привет! "+msg.From.FirstName)
-	message.ReplyMarkup = e.keyboard()
+	message := NewMessageBuilder(msg.Chat.ID, "Привет! "+msg.From.FirstName).
+		setReplyKeyboard().
+		build()
+
 	e.bot.Send(message)
 }
 
 func (e *EventHandler) getProfile(msg *tgbotapi.Message) {
 	user, err := e.userSrv.GetUser(msg.From.ID)
 	if err != nil {
-		e.sendMessage(msg.Chat.ID, errMsgGetProfile)
+		e.bot.Send(
+			NewMessageBuilder(msg.Chat.ID, errMsgGetProfile).build(),
+		)
 	}
 
-	e.sendMessage(msg.Chat.ID, fmt.Sprintf("Id: %d,\nUsername: %s,\nFirst Name: %s,\nLast Name: %v", user.UserId, user.Username, user.FirstName, user.LastName))
+	text := fmt.Sprintf("Id: %d,\nUsername: %s,\nFirst Name: %s,\nLast Name: %v", user.UserId, user.Username, user.FirstName, user.LastName)
+
+	e.bot.Send(
+		NewMessageBuilder(msg.Chat.ID, text).build(),
+	)
 }
