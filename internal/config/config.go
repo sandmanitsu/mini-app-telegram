@@ -11,6 +11,8 @@ import (
 
 type Config struct {
 	BotToken string `env:"BOT_TOKEN" env-required:"true"`
+	Host     string `env:"HOST" env-required:"true"`
+	Port     string `env:"PORT" env-required:"true"`
 	Env      string `env:"ENV" env-required:"true"`
 	DB       DB
 }
