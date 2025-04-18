@@ -25,7 +25,6 @@ func Run(config *config.Config, logger *slog.Logger) {
 		logger.Error("failed to init postgresql storage", sl.Err(err))
 		os.Exit(1)
 	}
-	_ = storage
 
 	// repository init
 	userRepo := repository.NewUserRepository(storage.DB, logger)
